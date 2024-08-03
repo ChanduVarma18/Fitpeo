@@ -1,0 +1,68 @@
+package NavigateToUrl;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.interactions.Actions;
+
+
+
+public class FitPeoAutomation {
+
+    public static void main(String[] args) throws InterruptedException  {
+        System.setProperty("webdriver.chrome.driver", "./src/test/resources/ChromeDriver/chromedriver.exe");
+        WebDriver driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+
+        try {
+            driver.get("https://www.fitpeo.com");
+
+            WebElement revenueCalculatorLink = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("Revenue Calculator")));
+            revenueCalculatorLink.click();
+
+            WebElement sliderSection = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(@class, 'MuiSlider-thumb')]")));
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", sliderSection);
+
+            WebElement sliderInput = driver.findElement(By.xpath("//span[@class='MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary MuiSlider-thumb MuiSlider-thumbSizeMedium MuiSlider-thumbColorPrimary css-sy3s50']"));
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("arguments[0].setAttribute('value', '820'); arguments[0].dispatchEvent(new Event('input', { bubbles: true }));", sliderInput);
+
+
+
+            WebElement textField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@type='number' and contains(@class, 'MuiInputBase-input')]\r\n")));
+            textField.clear();
+            ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", textField);
+            Actions actions = new Actions(driver);
+            actions.moveToElement(textField).click().perform();
+            textField.sendKeys("560");
+            
+            WebElement cpt99091 = driver.findElement(By.xpath("//span[@class='MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-1s3unkt' and text() ='57']"));
+            WebElement cpt99453 = driver.findElement(By.xpath("//span[@class='MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-1s3unkt' and text() ='19.19']"));
+            WebElement cpt99454 = driver.findElement(By.xpath("//span[@class='MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-1s3unkt' and text() ='63']"));
+            WebElement cpt99474 = driver.findElement(By.xpath("//span[@class='MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-1s3unkt' and text() ='15']"));
+
+            cpt99091.click();
+            cpt99453.click();
+            cpt99454.click();
+            cpt99474.click();
+
+            WebElement totalReimbursement = wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[@class='MuiTypography-root MuiTypography-body2 inter css-1xroguk' and text() = 'Total Recurring Reimbursement for all Patients Per Month:']")));
+            String reimbursementValue = totalReimbursement.getText();
+            
+            if (reimbursementValue.contains("$110700")) {
+                System.out.println("Total Recurring Reimbursement is correct: " + reimbursementValue);
+            } else {
+                System.out.println("Total Recurring Reimbursement is incorrect: " + reimbursementValue);
+            }
+       
+            
+        } finally {
+            driver.quit();
+        }
+    }
+}
